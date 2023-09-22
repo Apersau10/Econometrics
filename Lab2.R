@@ -1,4 +1,4 @@
-
+# Akash Persaud | Lab Partners - Mishal Nawaz & Zakaria Sule
 # from orig_data, pick a subset
 restrict_vax <- (Household_Pulse_data$RECVDVACC == "yes got vaxx" ) | (Household_Pulse_data$RECVDVACC == "no did not get vaxx")
 sample_data_vaxx <- subset(Household_Pulse_data,restrict_vax)
