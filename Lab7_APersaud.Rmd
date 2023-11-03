@@ -1,0 +1,273 @@
+---
+title: "Lab 7"
+author: "Luis Melo & Akash"
+date: "2023-10-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In this lab we prepare to evaluate workforce data. Specifically on individuals who choose to work in the public sector.
+We start by loading a couple CSV files that will help identify industry and jobs. 
+Then deploy few packages that will help with analytics and statistics
+
+```{r r,echo=FALSE}
+
+load("~/Desktop/ecob2000_Econometrics/Level 3 Lab/acs2021_ny_data.RData")
+require(plyr)
+require(dplyr)
+require(tidyverse)
+require(haven)
+require(stargazer)
+
+```
+
+To better understand and work with the various codes in the data file we recode as factors with level values
+
+```{r}
+
+levels_n <- read.csv("IND_levels.csv")
+names(levels_n) <- c("New_Level","levels_orig")
+acs2021$IND <- as.factor(acs2021$IND)
+levels_orig <- levels(acs2021$IND) 
+levels_new <- join(data.frame(levels_orig),data.frame(levels_n))
+
+acs2021$public_work <- acs2021$IND 
+levels_public <- read.csv("publicwork_recode.csv")
+names(levels_public) <- c("levels_orig","New_Level")
+levels_new_pub <- join(data.frame(levels_orig),data.frame(levels_public))
+
+
+levels(acs2021$IND) <- levels_new$New_Level
+levels(acs2021$public_work) <- levels_new_pub$New_Level
+
+```
+
+
+Before jumping into our intended goal of modeling we are creating a numeric version for our dependent variable of individuals in the public sector. 
+
+```{r}
+
+acs2021$public_work_num <- as.numeric(acs2021$public_work == "work for public, stable")
+
+
+table(acs2021$public_work,acs2021$public_work_num)
+
+```
+
+The above table confirms that the variable has been converted to numeric binary values
+We define "0" as not working in the public sector, with a result of 83236 individuals
+We define "1" as working in the public sector, with a result of 36265 individuals
+
+As we are choosing to model individuals working in the public sector we decide to subset the data to a smaller group.
+This group being Hispanic Women between 25 and 55 in the workforce who have at least a college degree or advanced degree
+
+
+```{r}
+
+attach(acs2021)
+use_varb <- (AGE >= 25) & (AGE <= 55) & (LABFORCE == 2) & (WKSWORK2 > 4) & (UHRSWORK >= 35) & (Hispanic == 1) & (female == 1) & ((educ_college == 1) | (educ_advdeg == 1))
+dat_use <- subset(acs2021,use_varb) # 
+detach(acs2021)
+
+```
+
+with this subset we estimate that Hispanic women will have a low probability of working in the public sector despite their level of education
+
+```{r} 
+
+ols_out1 <- lm(public_work_num ~ female + educ_hs + educ_somecoll + educ_college + educ_advdeg + AGE, data = acs2021)
+stargazer(ols_out1, type = "text")
+
+```
+
+
+This model shows that women are less likely to work in the public sector as is despite level of education. However women with advanced degrees are at least twice as likely to work in the public sector over other levels of education
+
+
+Now we create a new models with the intended purpose of predicting outcomes for our individuals in the public sector who are Latina's age 25 to 55 with at least a college degree and those who aren't.
+
+```{r}
+
+pred_vals_ols1 <- predict(ols_out1, dat_use)
+pred_model_ols1 <- (pred_vals_ols1 > mean(pred_vals_ols1))
+
+table(pred = pred_model_ols1, true = dat_use$public_work_num)
+
+summary(pred_vals_ols1)
+
+```
+
+The predicted table shows that there is more of a likelihood for our chosen individual in the puplic sector to not be a latina with college degree where the false & Negative 433 > 376 true and positive 
+Given that predicted values chosen are > mean of .4324
+
+
+Below we will now compare against a logit model with individuals of either sex, an education of at least a high school diploma and any age. 
+
+```{r}
+
+# logit 
+model_logit1 <- glm(public_work_num ~ female + educ_hs + educ_somecoll + educ_college + educ_advdeg + AGE, data = acs2021, family = binomial
+                    )
+summary(model_logit1)
+pred_vals_logit1 <- predict(model_logit1, acs2021, type = "response")
+pred_model_logit1 <- (pred_vals_logit1 > 0.5)
+table(pred = pred_model_logit1, true = acs2021$public_work_num)
+
+```
+
+The above logit model is showing predictors of a bigger variance but same skew of public working individuals women with edeucation 7457 is < 77985 or Men given that the values chosen are > .5
+
+the estimates on this model however show a significant increase in the likelihood of working in the public sector for any female. that is comparing the .136 from our latina with education model to .690 in the all women model
+
+This is a simalr find to levels of education as well. specifically to the advance degree comparison where correlation is almost tripled.
+However reviewing highscool and some college would not be good point estimates as our firdt model excluded that level of education. 
+
+---
+
+In the pursuit of furthering our regression modeling comparisons we introduce a new factor as an instrumental variable.
+This variable is PUMA, adding location in NY to our comparisons
+
+```{r}
+
+dat_use$PUMA_factor <- as.factor(dat_use$PUMA)
+
+d_pub_work <- data.frame(model.matrix(~ dat_use$public_work_num)) 
+
+d_female <- data.frame(model.matrix(~ dat_use$female))
+d_educ_college <- data.frame(model.matrix(~ dat_use$educ_college))
+d_educ_advdeg <- data.frame(model.matrix(~ dat_use$educ_advdeg))
+d_age <- data.frame(model.matrix(~ dat_use$AGE))
+d_PUMA <- data.frame(model.matrix(~ dat_use$PUMA_factor)) 
+
+```
+
+We then assign all PUMA variables as factors and create a matrix with our Y and dummy variables. 
+
+We know that some values of 0 can be problematic, so we run the below code to identify that we have no columns with. empty data
+
+```{r}
+
+sum( colSums(d_PUMA) == 0) # confirmed at 0
+
+```
+
+Once confirmed we create a data table for the new subset with puma factors.
+
+```{r}
+
+# there are better ways to code this, but choosing my professors!
+
+dat_for_analysis_sub <- data.frame(
+  d_pub_work[,2], # need [] since model.matrix includes intercept term
+  d_female[,2],
+  d_educ_college[,2],
+  d_educ_advdeg[,2],
+  d_age[,2],
+  d_PUMA[,2:136] ) # this last term is why model.matrix
+
+
+```
+
+The matrix data table technique was a great choice, not only because it was selected by the professor but also because the data needed was in the second column for most and Puma column length was dependent on our original dat use subset. 
+
+
+Now being that our professor is also anal retentive, the following code will be removing the repetitive "dat_use" from the column names in our new subset. allowing for easier viewing and recalling in later parts. 
+As well as renaming columns 1-5
+
+We then also filtered out 0 value columns from the dataset to prevent errors in the later parts
+
+```{r}
+
+names(dat_for_analysis_sub) <- sub("dat_use.","",names(dat_for_analysis_sub)) # drops each repetition of dat_use
+
+names(dat_for_analysis_sub)[1] <- "pub_work"
+names(dat_for_analysis_sub)[2] <- "female"
+names(dat_for_analysis_sub)[3:4] <- c("College","AdvDeg")
+names(dat_for_analysis_sub)[5] <- "Age"
+
+# names(dat_for_analysis_sub) # confirming results from above
+
+dat_for_anal_sub2 <- dat_for_analysis_sub[, colSums(dat_for_analysis_sub) != 0]
+
+
+```
+
+With our new data set complete we will be training an algorithm to assist in our analytics
+Starting with setting randomness to the selection of data from public work individuals
+
+```{r}
+
+require("standardize")
+set.seed(654321)
+NN <- length(dat_for_anal_sub2$pub_work)
+
+
+```
+
+We then restrict the data selected to a small 10% to train and test the models 
+
+```{r}
+
+
+restrict_1 <- (runif(NN) < 0.1) # use 10% as training data, ordinarily this would be much bigger but start small
+summary(restrict_1)
+dat_train <- subset(dat_for_anal_sub2, restrict_1)
+dat_test <- subset(dat_for_anal_sub2, !restrict_1)
+
+```
+
+Summary of the 10% selection shows 1149 and 147 
+
+Below we confirm the trained data is not inclusive of 0 columns that can skew the data
+
+```{r}
+
+sum( colSums(dat_train) == 0) # again check this below, should be zero
+
+```
+
+Now we formulate an object that works with the public working individuals of our subset and proceed to standardize the data selection from the trained algorithm. 
+Then view predicted values from our test algorithm
+
+```{r}
+
+fmla_sobj <- reformulate( names(dat_for_anal_sub2[2:140]), response = "pub_work")
+
+sobj <- standardize(fmla_sobj, dat_train, family = binomial)
+
+s_dat_test <- predict(sobj, dat_test)
+
+```
+
+
+```{r}
+#reminder
+sum( colSums(dat_train) == 0) # again check this below, should be zero
+```
+
+The below model can't run due to the 56 colSums from our dat_train algorithm data 
+the data from the PUMA factors are all low level or insignificant values. The max value might be 1 but the mean are all < .01
+
+we are going to have to reevaluate the data to continue analytical comparisons.
+
+---
+
+model_lpm1 <- lm(sobj$formula, data = sobj$data)
+summary(model_lpm1)
+pred_vals_lpm <- predict(model_lpm1, s_dat_test)
+pred_model_lpm1 <- (pred_vals_lpm > mean(pred_vals_lpm))
+table(pred = pred_model_lpm1, true = dat_test$pub_work)
+
+# logit 
+model_logit1 <- glm(sobj$formula, family = binomial, data = sobj$data)
+summary(model_logit1)
+pred_vals <- predict(model_logit1, s_dat_test, type = "response")
+pred_model_logit1 <- (pred_vals > 0.5)
+table(pred = pred_model_logit1, true = dat_test$pub_work)
+
+
+```
+
