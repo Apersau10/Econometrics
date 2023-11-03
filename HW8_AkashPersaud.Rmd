@@ -1,0 +1,609 @@
+---
+title: "HW8 by Akash Persaud & Joel Rojas"
+output: github_document
+---
+install.packages("knitr")
+
+
+### Econ B2000, MA Econometrics
+### HW8
+### Fall 2023
+
+
+Lab
+Data Preprocessing Steps:
+Standardization:
+•	Our data consists of various X-variables (predictors), which include demographic information and a large categorical variable 'PUMA' representing different neighborhoods.
+•	To ensure that all our predictors contribute equally to the analysis, we standardized them so that each feature's values lie within the [0, 1] interval
+Splitting Data:
+•	We divided our dataset into two parts: a training set (10% of the data) and a test set (90% of the data). 
+•	The set.seed() function ensured that our random selection of training and test data was reproducible for consistent results across multiple runs.
+Handling Categorical Variables:
+•	The PUMA variable was converted into a factor to handle its categorical nature properly. However, given that it's a "big factor" with many levels, we used model.matrix() to create dummy variables for each level.
+•	A check was performed using colSums() to ensure no factor level was completely absent in the data.
+Data Reconstruction:
+•	After processing individual predictors, they were combined into a new data frame intended for analysis.
+Model Training and Hypothesis Testing:
+Creating Formulas:
+•	The reformulate() function was used to dynamically create a formula for our models. 
+Model Estimation:
+•	For the LPM (model_lpm1), we used the standardized training data and evaluated it against the test data to predict whether the public works or not.
+•	We also trained a logistic regression model (model_logit1), suitable for binary outcomes, which predicts the probability of an individual engaging in public work.
+Hypothesis Testing and Model Assessment:
+LM:
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.70960 -0.24548 -0.15558 -0.03185  1.08008 
+
+Coefficients:
+                   Estimate Std. Error t value Pr(>|t|)    
+(Intercept)       0.5170397  0.4681067   1.105 0.269367    
+female1          -0.0413381  0.0018704 -22.101  < 2e-16 ***
+HS1               0.0270260  0.0041562   6.503 7.97e-11 ***
+SomeColl1         0.0570427  0.0040650  14.033  < 2e-16 ***
+College1          0.1073289  0.0041374  25.941  < 2e-16 ***
+AdvDeg1           0.1796287  0.0044641  40.239  < 2e-16 ***
+Age               0.0082812  0.0018574   4.459 8.27e-06 ***
+PUMA_factor1011   0.0306817  0.0116600   2.631 0.008507 ** 
+PUMA_factor1021  -0.0303900  0.0108175  -2.809 0.004966 ** 
+PUMA_factor1031  -0.0008026  0.0119555  -0.067 0.946476    
+PUMA_factor1041   0.0019304  0.0154070   0.125 0.900291    
+PUMA_factor1051  -0.0223541  0.0149467  -1.496 0.134767    
+PUMA_factor1061   0.0019458  0.0251667   0.077 0.938373    
+PUMA_factor1071  -0.0223982  0.0333423  -0.672 0.501736    
+PUMA_factor1081  -0.0771743  0.0302361  -2.552 0.010702 *  
+PUMA_factor1091  -0.0571777  0.0281329  -2.032 0.042117 *  
+PUMA_factor1101  -0.0378192  0.0253666  -1.491 0.135994    
+PUMA_factor1111   0.0010247  0.0716749   0.014 0.988593    
+PUMA_factor1121  -0.0504141  0.0562298  -0.897 0.369951    
+PUMA_factor1131  -0.0815896  0.0491739  -1.659 0.097081 .  
+PUMA_factor1141   0.0802337  0.0477870   1.679 0.093161 .  
+PUMA_factor1151  -0.0051450  0.0585219  -0.088 0.929944    
+PUMA_factor1161   0.0060770  0.0541828   0.112 0.910699    
+PUMA_factor1171  -0.0926731  0.0442449  -2.095 0.036216 *  
+PUMA_factor1181   0.0312164  0.0432332   0.722 0.470270    
+PUMA_factor1191   0.0420499  0.0611282   0.688 0.491521    
+PUMA_factor1201   0.0229401  0.0405549   0.566 0.571631    
+PUMA_factor1211   0.0193815  0.0422851   0.458 0.646700    
+PUMA_factor1221   0.0209500  0.0585326   0.358 0.720405    
+PUMA_factor1231   0.0213827  0.0491803   0.435 0.663722    
+PUMA_factor1241  -0.0245702  0.0523566  -0.469 0.638868    
+PUMA_factor1251  -0.0344902  0.0491741  -0.701 0.483064    
+PUMA_factor1261   0.0065011  0.0422799   0.154 0.877797    
+PUMA_factor1271   0.1058545  0.0585249   1.809 0.070503 .  
+PUMA_factor1281   0.0244533  0.0477881   0.512 0.608862    
+PUMA_factor1291   0.0175924  0.0442451   0.398 0.690919    
+PUMA_factor1301  -0.0818177  0.0641088  -1.276 0.201880    
+PUMA_factor1311  -0.0224769  0.0611331  -0.368 0.713120    
+PUMA_factor1321   0.0018463  0.0413890   0.045 0.964419    
+PUMA_factor1331   0.1154296  0.0477865   2.416 0.015716 *  
+PUMA_factor1341   0.0999922  0.0405579   2.465 0.013689 *  
+PUMA_factor2001   0.0327591  0.0068916   4.753 2.01e-06 ***
+PUMA_factor2011  -0.0001113  0.0305767  -0.004 0.997095    
+PUMA_factor2021   0.0657605  0.0273539   2.404 0.016218 *  
+PUMA_factor2031   0.0677549  0.0477875   1.418 0.156245    
+PUMA_factor2041  -0.0543566  0.0585245  -0.929 0.353006    
+PUMA_factor2051   0.1065983  0.0390260   2.731 0.006308 ** 
+PUMA_factor2061   0.0801081  0.0585252   1.369 0.171074    
+PUMA_factor2071   0.1176013  0.0422791   2.782 0.005412 ** 
+PUMA_factor2081  -0.0121940  0.0413919  -0.295 0.768301    
+PUMA_factor2091   0.1193020  0.0541831   2.202 0.027682 *  
+PUMA_factor3001   0.0384751  0.0066858   5.755 8.73e-09 ***
+PUMA_factor3011   0.0363856  0.0183102   1.987 0.046909 *  
+PUMA_factor3021   0.0076025  0.0177433   0.428 0.668310    
+PUMA_factor3031  -0.0011686  0.0221514  -0.053 0.957928    
+PUMA_factor3041  -0.0492566  0.0261909  -1.881 0.060022 .  
+PUMA_factor3051   0.0012034  0.0324770   0.037 0.970442    
+PUMA_factor3061   0.0096599  0.0247883   0.390 0.696764    
+PUMA_factor3071   0.0155605  0.0338027   0.460 0.645279    
+PUMA_factor3081   0.0258134  0.0358530   0.720 0.471542    
+PUMA_factor4001   0.0280584  0.0073178   3.834 0.000126 ***
+PUMA_factor4011   0.0191233  0.0182373   1.049 0.294377    
+PUMA_factor4021  -0.0060798  0.0229779  -0.265 0.791324    
+PUMA_factor4031   0.0555535  0.0295871   1.878 0.060439 .  
+PUMA_factor4041   0.0403984  0.0413887   0.976 0.329033    
+PUMA_factor4051  -0.0147270  0.0541958  -0.272 0.785826    
+PUMA_factor4061  -0.0435417  0.0383355  -1.136 0.256042    
+PUMA_factor4071  -0.0260779  0.0453387  -0.575 0.565172    
+PUMA_factor4081  -0.0236477  0.0364217  -0.649 0.516163    
+PUMA_factor4091  -0.0331708  0.0397677  -0.834 0.404221    
+PUMA_factor4101  -0.0377762  0.0397723  -0.950 0.342212    
+PUMA_factor4111  -0.0375012  0.0309310  -1.212 0.225359    
+PUMA_factor4121  -0.0386599  0.0390240  -0.991 0.321852    
+PUMA_factor4131  -0.0723143  0.0390250  -1.853 0.063885 .  
+PUMA_factor5001   0.0077067  0.0073183   1.053 0.292310    
+PUMA_factor5011  -0.0045158  0.0193573  -0.233 0.815541    
+PUMA_factor5021   0.0087153  0.0213950   0.407 0.683751    
+PUMA_factor5031   0.0322567  0.0257747   1.251 0.210762    
+PUMA_factor5041   0.0200343  0.0299094   0.670 0.502968    
+PUMA_factor5051  -0.0192179  0.0299118  -0.642 0.520560    
+PUMA_factor5061  -0.0067170  0.0251765  -0.267 0.789627    
+PUMA_factor5071   0.0162952  0.0281385   0.579 0.562521    
+PUMA_factor5081  -0.0481861  0.0405574  -1.188 0.234802    
+PUMA_factor6001   0.0254534  0.0083920   3.033 0.002422 ** 
+PUMA_factor6011  -0.0349868  0.0174278  -2.008 0.044699 *  
+PUMA_factor6021   0.0349259  0.0222757   1.568 0.116913    
+PUMA_factor6031  -0.0398348  0.0324801  -1.226 0.220040    
+PUMA_factor6041   0.0010805  0.0251697   0.043 0.965760    
+PUMA_factor6051   0.0559311  0.0585298   0.956 0.339279    
+PUMA_factor7001   0.0214467  0.0088630   2.420 0.015533 *  
+PUMA_factor7011  -0.0160050  0.0178812  -0.895 0.370751    
+PUMA_factor7021   0.0191961  0.0164239   1.169 0.242495    
+PUMA_factor7031  -0.0034176  0.0215160  -0.159 0.873797    
+PUMA_factor7041   0.0147683  0.0246067   0.600 0.548393    
+PUMA_factor7051   0.1226089  0.0585236   2.095 0.036173 *  
+PUMA_factor8001   0.0125782  0.0085194   1.476 0.139838    
+PUMA_factor8011   0.0479935  0.0186929   2.567 0.010247 *  
+PUMA_factor8021   0.0477861  0.0173527   2.754 0.005893 ** 
+PUMA_factor8031  -0.0120346  0.0217605  -0.553 0.580232    
+PUMA_factor8041  -0.0156159  0.0205119  -0.761 0.446478    
+PUMA_factor8051   0.0167762  0.0211627   0.793 0.427942    
+PUMA_factor8061  -0.0306049  0.0337998  -0.905 0.365217    
+PUMA_factor8071   0.0055906  0.0286913   0.195 0.845510    
+PUMA_factor8081  -0.0245898  0.0413893  -0.594 0.552442    
+PUMA_factor8091   0.0213173  0.0405550   0.526 0.599141    
+PUMA_factor8101  -0.0387970  0.0397683  -0.976 0.329279    
+PUMA_factor8111   0.0615256  0.0585259   1.051 0.293147    
+PUMA_factor8121  -0.0486606  0.0295900  -1.644 0.100081    
+PUMA_factor8131  -0.0299035  0.0329073  -0.909 0.363503    
+PUMA_factor8141  -0.0492149  0.0329055  -1.496 0.134753    
+PUMA_factor8151  -0.0943335  0.0376619  -2.505 0.012257 *  
+PUMA_factor8161  -0.0221032  0.0422844  -0.523 0.601166    
+PUMA_factor8171   0.0292956  0.0453403   0.646 0.518200    
+PUMA_factor8181  -0.0070464  0.0413887  -0.170 0.864814    
+PUMA_factor8191  -0.0114626  0.0405557  -0.283 0.777454    
+PUMA_factor8201  -0.0749537  0.0477881  -1.568 0.116780    
+PUMA_factor8211  -0.0646824  0.0397706  -1.626 0.103874    
+PUMA_factor8221   0.0630972  0.0523501   1.205 0.228096    
+PUMA_factor8231  -0.0696027  0.0422799  -1.646 0.099722 .  
+PUMA_factor8241   0.0661632  0.0390247   1.695 0.090002 .  
+PUMA_factor9001   0.0354873  0.0088171   4.025 5.71e-05 ***
+PUMA_factor9011  -0.0210044  0.0179500  -1.170 0.241940    
+PUMA_factor9021   0.0063856  0.0148267   0.431 0.666699    
+PUMA_factor9031  -0.0181099  0.0182367  -0.993 0.320692    
+PUMA_factor9041  -0.0371100  0.0209353  -1.773 0.076300 .  
+PUMA_factor9051   0.0699808  0.0237560   2.946 0.003223 ** 
+PUMA_factor9061   0.0073775  0.0229768   0.321 0.748149    
+PUMA_factor9071  -0.0407441  0.0358486  -1.137 0.255728    
+PUMA_factor9081  -0.0279983  0.0641106  -0.437 0.662317    
+PUMA_factor9091  -0.0060969  0.0432346  -0.141 0.887855    
+PUMA_factor9101  -0.0281177  0.0523539  -0.537 0.591222    
+PUMA_factor10001 -0.0072376  0.0096841  -0.747 0.454841    
+PUMA_factor10011 -0.0256011  0.0129968  -1.970 0.048867 *  
+PUMA_factor10021 -0.0042367  0.0154950  -0.273 0.784527    
+PUMA_factor10031 -0.0093817  0.0185373  -0.506 0.612792    
+PUMA_factor10041  0.0216661  0.0220175   0.984 0.325099    
+PUMA_factor10051 -0.0273665  0.0234344  -1.168 0.242896    
+PUMA_factor10061 -0.0617968  0.0240896  -2.565 0.010312 *  
+PUMA_factor10071  0.0031272  0.0231326   0.135 0.892466    
+PUMA_factor10081 -0.0147450  0.0453387  -0.325 0.745018    
+PUMA_factor11001  0.0115567  0.0096018   1.204 0.228748    
+PUMA_factor11011  0.0145508  0.0162146   0.897 0.369514    
+PUMA_factor11021 -0.0005990  0.0180907  -0.033 0.973586    
+PUMA_factor11031  0.0420223  0.0216368   1.942 0.052122 .  
+PUMA_factor11041  0.0200529  0.0187720   1.068 0.285419    
+PUMA_factor11051 -0.0062500  0.0215135  -0.291 0.771424    
+PUMA_factor11061  0.0037429  0.0268704   0.139 0.889217    
+PUMA_factor11071 -0.0047979  0.0477930  -0.100 0.920036    
+PUMA_factor11081 -0.1219174  0.0523478  -2.329 0.019864 *  
+PUMA_factor11091 -0.0666948  0.0585222  -1.140 0.254438    
+PUMA_factor11101 -0.0499644  0.0453383  -1.102 0.270451    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.4054 on 48176 degrees of freedom
+Multiple R-squared:  0.08319,	Adjusted R-squared:  0.08034 
+F-statistic: 29.14 on 150 and 48176 DF,  p-value: < 2.2e-16
+
+      true
+pred         0      1
+  FALSE 197284  32338
+  TRUE  138900  66129
+
+•	H0 (Null Hypothesis): The education level has no effect on the likelihood of an individual working in the public sector. 
+•	H1 (Alternative Hypothesis): The education level has an effect on the likelihood of an individual working in the public sector. 
+•	There is evidence to reject the null hypothesis and conclude that education level has a positive effect on the likelihood of an individual working in the public sector.
+GLM:
+Coefficients:
+                   Estimate Std. Error z value Pr(>|z|)    
+(Intercept)      -13.208933  64.889942  -0.204  0.83870    
+female1           -0.247098   0.011347 -21.776  < 2e-16 ***
+HS1                0.317524   0.038129   8.328  < 2e-16 ***
+SomeColl1          0.549525   0.036959  14.869  < 2e-16 ***
+College1           0.829867   0.036854  22.518  < 2e-16 ***
+AdvDeg1            1.145350   0.037594  30.466  < 2e-16 ***
+Age                0.051545   0.011394   4.524 6.07e-06 ***
+PUMA_factor1011    0.170418   0.065756   2.592  0.00955 ** 
+PUMA_factor1021   -0.188059   0.069941  -2.689  0.00717 ** 
+PUMA_factor1031   -0.001667   0.071390  -0.023  0.98137    
+PUMA_factor1041    0.014367   0.096058   0.150  0.88111    
+PUMA_factor1051   -0.127292   0.092121  -1.382  0.16704    
+PUMA_factor1061    0.015442   0.149197   0.103  0.91757    
+PUMA_factor1071   -0.132633   0.208074  -0.637  0.52384    
+PUMA_factor1081   -0.551053   0.241579  -2.281  0.02255 *  
+PUMA_factor1091   -0.378232   0.198126  -1.909  0.05626 .  
+PUMA_factor1101   -0.204090   0.155568  -1.312  0.18955    
+PUMA_factor1111    0.001253   0.417307   0.003  0.99760    
+PUMA_factor1121   -0.336182   0.393120  -0.855  0.39246    
+PUMA_factor1131   -0.573773   0.385172  -1.490  0.13632    
+PUMA_factor1141    0.413175   0.255916   1.614  0.10642    
+PUMA_factor1151   -0.025736   0.348049  -0.074  0.94106    
+PUMA_factor1161    0.050774   0.305918   0.166  0.86818    
+PUMA_factor1171   -0.942914   0.517106  -1.823  0.06824 .  
+PUMA_factor1181    0.183758   0.244655   0.751  0.45260    
+PUMA_factor1191    0.238246   0.364676   0.653  0.51356    
+PUMA_factor1201    0.120883   0.223696   0.540  0.58893    
+PUMA_factor1211    0.142883   0.261566   0.546  0.58489    
+PUMA_factor1221    0.173620   0.394407   0.440  0.65979    
+PUMA_factor1231    0.166796   0.323941   0.515  0.60663    
+PUMA_factor1241   -0.216738   0.400218  -0.542  0.58813    
+PUMA_factor1251   -0.271220   0.381867  -0.710  0.47755    
+PUMA_factor1261    0.021228   0.253820   0.084  0.93335    
+PUMA_factor1271    0.536187   0.297686   1.801  0.07167 .  
+PUMA_factor1281    0.148064   0.270854   0.547  0.58461    
+PUMA_factor1291    0.102260   0.249269   0.410  0.68163    
+PUMA_factor1301   -5.446235  51.020663  -0.107  0.91499    
+PUMA_factor1311   -0.134811   0.393487  -0.343  0.73189    
+PUMA_factor1321    0.007546   0.261343   0.029  0.97697    
+PUMA_factor1331    0.591547   0.249876   2.367  0.01792 *  
+PUMA_factor1341    0.570374   0.220826   2.583  0.00980 ** 
+PUMA_factor2001    0.194420   0.040095   4.849 1.24e-06 ***
+PUMA_factor2011   -0.009603   0.195596  -0.049  0.96084    
+PUMA_factor2021    0.363595   0.148903   2.442  0.01461 *  
+PUMA_factor2031    0.345978   0.255859   1.352  0.17631    
+PUMA_factor2041   -0.328431   0.394968  -0.832  0.40567    
+PUMA_factor2051    0.547923   0.201146   2.724  0.00645 ** 
+PUMA_factor2061    0.387159   0.303056   1.278  0.20142    
+PUMA_factor2071    0.584023   0.219042   2.666  0.00767 ** 
+PUMA_factor2081   -0.096520   0.284503  -0.339  0.73442    
+PUMA_factor2091    0.636259   0.287122   2.216  0.02669 *  
+PUMA_factor3001    0.227798   0.038569   5.906 3.50e-09 ***
+PUMA_factor3011    0.200540   0.101420   1.977  0.04800 *  
+PUMA_factor3021    0.050412   0.105694   0.477  0.63339    
+PUMA_factor3031   -0.010276   0.123909  -0.083  0.93390    
+PUMA_factor3041   -0.389611   0.205574  -1.895  0.05806 .  
+PUMA_factor3051    0.009958   0.193832   0.051  0.95903    
+PUMA_factor3061    0.052360   0.143896   0.364  0.71595    
+PUMA_factor3071    0.086568   0.193011   0.449  0.65378    
+PUMA_factor3081    0.165750   0.210150   0.789  0.43027    
+PUMA_factor4001    0.170046   0.043174   3.939 8.19e-05 ***
+PUMA_factor4011    0.119222   0.109621   1.088  0.27678    
+PUMA_factor4021   -0.038846   0.145748  -0.267  0.78984    
+PUMA_factor4031    0.310219   0.166818   1.860  0.06294 .  
+PUMA_factor4041    0.244926   0.233383   1.049  0.29397    
+PUMA_factor4051   -0.244131   0.523783  -0.466  0.64115    
+PUMA_factor4061   -0.452461   0.374163  -1.209  0.22656    
+PUMA_factor4071   -0.190967   0.320816  -0.595  0.55167    
+PUMA_factor4081   -0.162405   0.252904  -0.642  0.52077    
+PUMA_factor4091   -0.278854   0.314845  -0.886  0.37579    
+PUMA_factor4101   -0.401469   0.373848  -1.074  0.28288    
+PUMA_factor4111   -0.248483   0.211617  -1.174  0.24031    
+PUMA_factor4121   -0.252228   0.276197  -0.913  0.36113    
+PUMA_factor4131   -0.921015   0.514675  -1.790  0.07353 .  
+PUMA_factor5001    0.047440   0.045637   1.039  0.29858    
+PUMA_factor5011   -0.024343   0.120474  -0.202  0.83987    
+PUMA_factor5021    0.051584   0.126347   0.408  0.68308    
+PUMA_factor5031    0.159153   0.137500   1.157  0.24708    
+PUMA_factor5041    0.101467   0.165063   0.615  0.53874    
+PUMA_factor5051   -0.107631   0.174792  -0.616  0.53805    
+PUMA_factor5061   -0.030129   0.142446  -0.212  0.83249    
+PUMA_factor5071    0.093920   0.157530   0.596  0.55104    
+PUMA_factor5081   -0.292260   0.259172  -1.128  0.25946    
+PUMA_factor6001    0.154394   0.049716   3.106  0.00190 ** 
+PUMA_factor6011   -0.199376   0.107624  -1.853  0.06395 .  
+PUMA_factor6021    0.194291   0.126060   1.541  0.12325    
+PUMA_factor6031   -0.240879   0.204368  -1.179  0.23854    
+PUMA_factor6041    0.007261   0.142115   0.051  0.95925    
+PUMA_factor6051    0.362529   0.338397   1.071  0.28403    
+PUMA_factor7001    0.132406   0.053236   2.487  0.01288 *  
+PUMA_factor7011   -0.100705   0.111786  -0.901  0.36766    
+PUMA_factor7021    0.111394   0.096199   1.158  0.24688    
+PUMA_factor7031   -0.017466   0.126391  -0.138  0.89009    
+PUMA_factor7041    0.093601   0.149943   0.624  0.53247    
+PUMA_factor7051    0.596723   0.304123   1.962  0.04975 *  
+PUMA_factor8001    0.075968   0.051830   1.466  0.14273    
+PUMA_factor8011    0.255961   0.101916   2.511  0.01202 *  
+PUMA_factor8021    0.260656   0.095757   2.722  0.00649 ** 
+PUMA_factor8031   -0.071667   0.130593  -0.549  0.58315    
+PUMA_factor8041   -0.083620   0.120573  -0.694  0.48798    
+PUMA_factor8051    0.103635   0.127837   0.811  0.41755    
+PUMA_factor8061   -0.211918   0.230571  -0.919  0.35804    
+PUMA_factor8071    0.035573   0.181443   0.196  0.84457    
+PUMA_factor8081   -0.132410   0.256828  -0.516  0.60616    
+PUMA_factor8091    0.134142   0.244492   0.549  0.58324    
+PUMA_factor8101   -0.290929   0.284564  -1.022  0.30661    
+PUMA_factor8111    0.290488   0.311627   0.932  0.35125    
+PUMA_factor8121   -0.310031   0.201369  -1.540  0.12365    
+PUMA_factor8131   -0.166955   0.203614  -0.820  0.41224    
+PUMA_factor8141   -0.275710   0.204872  -1.346  0.17838    
+PUMA_factor8151   -0.661606   0.309004  -2.141  0.03227 *  
+PUMA_factor8161   -0.184511   0.318668  -0.579  0.56258    
+PUMA_factor8171    0.144799   0.244246   0.593  0.55329    
+PUMA_factor8181   -0.037529   0.260687  -0.144  0.88553    
+PUMA_factor8191   -0.075207   0.244692  -0.307  0.75857    
+PUMA_factor8201   -0.536278   0.382218  -1.403  0.16060    
+PUMA_factor8211   -0.400474   0.276584  -1.448  0.14764    
+PUMA_factor8221    0.301835   0.272299   1.108  0.26766    
+PUMA_factor8231   -0.460100   0.313889  -1.466  0.14270    
+PUMA_factor8241    0.348854   0.210885   1.654  0.09808 .  
+PUMA_factor9001    0.206748   0.050409   4.101 4.11e-05 ***
+PUMA_factor9011   -0.135798   0.117376  -1.157  0.24730    
+PUMA_factor9021    0.037935   0.085780   0.442  0.65832    
+PUMA_factor9031   -0.102908   0.113129  -0.910  0.36300    
+PUMA_factor9041   -0.238042   0.141534  -1.682  0.09259 .  
+PUMA_factor9051    0.343308   0.126910   2.705  0.00683 ** 
+PUMA_factor9061    0.042526   0.136304   0.312  0.75504    
+PUMA_factor9071   -0.288608   0.251083  -1.149  0.25037    
+PUMA_factor9081   -0.241662   0.530684  -0.455  0.64884    
+PUMA_factor9091   -0.012737   0.244908  -0.052  0.95852    
+PUMA_factor9101   -0.131639   0.300007  -0.439  0.66082    
+PUMA_factor10001  -0.049205   0.062499  -0.787  0.43111    
+PUMA_factor10011  -0.165793   0.085714  -1.934  0.05308 .  
+PUMA_factor10021  -0.021907   0.093447  -0.234  0.81465    
+PUMA_factor10031  -0.054745   0.112830  -0.485  0.62753    
+PUMA_factor10041   0.120427   0.121452   0.992  0.32141    
+PUMA_factor10051  -0.163126   0.149462  -1.091  0.27509    
+PUMA_factor10061  -0.377465   0.163062  -2.315  0.02062 *  
+PUMA_factor10071   0.018794   0.130285   0.144  0.88530    
+PUMA_factor10081  -0.097001   0.291118  -0.333  0.73898    
+PUMA_factor11001   0.074373   0.059424   1.252  0.21073    
+PUMA_factor11011   0.084554   0.096227   0.879  0.37956    
+PUMA_factor11021  -0.006756   0.111765  -0.060  0.95180    
+PUMA_factor11031   0.239061   0.123647   1.933  0.05318 .  
+PUMA_factor11041   0.118637   0.110185   1.077  0.28161    
+PUMA_factor11051  -0.035964   0.134886  -0.267  0.78976    
+PUMA_factor11061   0.018636   0.161127   0.116  0.90792    
+PUMA_factor11071  -0.026986   0.289227  -0.093  0.92566    
+PUMA_factor11081  -5.688590  39.980261  -0.142  0.88685    
+PUMA_factor11091  -0.564638   0.529282  -1.067  0.28606    
+PUMA_factor11101  -0.338933   0.322481  -1.051  0.29325    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 52464  on 48326  degrees of freedom
+Residual deviance: 48419  on 48176  degrees of freedom
+AIC: 48721
+
+Number of Fisher Scoring iterations: 11
+
+    true
+pred         0      1
+  FALSE 328860  90058
+  TRUE    7324   8409
+
+•	H0 (Null Hypothesis): Age  has no effect on the likelihood of an individual working in the public sector. 
+•	H1 (Alternative Hypothesis): Age  has an effect on the likelihood of an individual working in the public sector. 
+•	There is evidence to reject the null hypothesis and conclude that Age does have a statistically significant effect on if a person would work in the public sector.
+Papers
+
+Paper 1: Parametric modeling and analysis of NFL run plays 
+Preston Biro and Stephen G. Walker Department of Statistics & Data Science University of Texas at Austin, USA
+
+Summary: 
+In this paper, Biro and Walker explore the efficiency of NFL run plays using advanced statistical techniques. The authors employ parametric regression models, particularly those based on the skew-t distribution, to account for the asymmetry and heavy-tailed nature of the distribution of yards gained per run play.
+The research aims to determine how different NFL teams perform relative to league averages when it comes to running the football. Through the lens of a skew-t regression model, the study estimates team-specific deviations from the league mean. This approach allows for a more nuanced understanding of team performance, taking into account factors that may cause the distribution of run play gains to deviate from normality.
+
+Paper 2: Predicting the Outcome of NFL Games Using Logistic Regression 
+Stephen Bouzianis University of New Hampshire, Durham
+
+Summary: 
+The paper by Stephen Bouzianis aims to establish a predictive model for NFL game outcomes using logistic regression, a statistical method well-suited for binary outcomes like win/loss predictions. The study is motivated by the immense popularity of the NFL and the potential for increased revenue through legal sports gambling. With more people invested in game outcomes, reliable prediction models are valuable to consumers, franchises, and the betting industry.
+
+The core of the paper revolves around logistic regression. This method is chosen for its effectiveness in yielding probabilities between 0 and 1, which is apt for win/loss predictions in NFL games. Bouzianis references studies where logistic regression was applied to other sports and contexts, adapting their approach to NFL data.
+
+
+
+
+
+  
+We will start the first of a 3-part sequence.
+
+Upon Claudia Goldin being named for Nobel Prize this month, I was talking with a colleague, Prof Norma Fuentes-Mayorga. She described her hypothesis about female labor force participation and especially choices to work in the public sector, in jobs that are more stable. She has heard this rationale in numerous interviews, particularly among minoritized women, but we'd like to see if there is more evidence for this. I have created an indicator (public_work) in the ACS2021 data, based on the industry that the person works in.
+
+In the first part, we will use basic OLS to estimate some models of the choice to work in public sector. In second part (next week) we'll estimate with logit and probit models. In third part (week after) we'll use some additional machine-learning techniques.
+
+We'll start by discussing what is appropriate specification of interaction terms, to find evidence of this effect. In your group you can discuss about what subset is most relevant and how exactly you'd implement the estimation. Then you will work on some results, come back and share.
+
+You'll have to download a couple csv definition files, `IND_levels.csv` and `publicwork_recode.csv`. Then you should first run these:
+
+```{r eval=FALSE}
+require(plyr)
+require(dplyr)
+require(tidyverse)
+require(haven)
+
+
+levels_n <- read.csv("IND_levels.csv")
+names(levels_n) <- c("New_Level","levels_orig")
+acs2017$IND <- as.factor(acs2017$IND)
+levels_orig <- levels(acs2017$IND) 
+levels_new <- join(data.frame(levels_orig),data.frame(levels_n))
+
+acs2017$public_work <- acs2017$IND 
+summary(acs2017)
+levels_public <- read.csv("publicwork_recode.csv")
+names(levels_public) <- c("levels_orig","New_Level")
+levels_new_pub <- join(data.frame(levels_orig),data.frame(levels_public))
+
+
+levels(acs2017$IND) <- levels_new$New_Level
+levels(acs2017$public_work) <- levels_new_pub$New_Level
+summary(acs2017)
+
+```
+
+Now before you run to estimate a model, in general it is a good idea to check summary stats before doing fancier models. For example look at the fractions by education, maybe do some statistics like you ~~did~~ should have done in exam.
+
+R doesn't want a factor as dependent variable in lm() call, so we create a numeric version,
+```{r eval=FALSE}
+acs2017$public_work_num <- as.numeric(acs2017$public_work == "work for public, stable")
+```
+Although other functions will take a factor. That can be trouble so be careful! All the math underlying is just concerned with which of the x-variables make the y-variable more likely to be a higher number. In this case it's ok, I've set it up but in general you want to confirm which factor answer is one and which is zero.
+
+For instance,
+
+```{r}
+table(acs2017$public_work,acs2017$public_work_num)
+#shows that a one corresponds to 'yes the person does work for public and/or in a generally stable job'. But a different person could estimate a model where the dependent variable is 'yes the person works in private sector' and that would have different signs for the estimated coefficients! Either model could be sensible, as long as you're clear about which one the computer is estimating. Be paranoid and check.
+```
+
+You can estimate models something like this (once you figure out what subset of data you'll use)
+```{r eval=TRUE}
+
+
+library(dplyr)
+
+dat_use <- acs2017 %>%
+  mutate(
+    educ_hs = ifelse(EDUCD >= 060 & EDUCD <= 064, 1, 0),  
+    educ_somecoll = ifelse(EDUCD >= 065 & EDUCD <= 083, 1, 0),  
+    educ_college = ifelse(EDUCD >= 090 & EDUCD <= 101, 1, 0),  
+    educ_advdeg = ifelse(EDUCD >= 110, 1, 0)
+  ) %>%
+  filter(!is.na(public_work) & !is.na(public_work_num)) %>%
+  filter( AGE >= 25, AGE <= 40)
+
+
+ols_out1 <- lm(public_work_num ~ educ_hs + educ_somecoll + educ_college + educ_advdeg + AGE + SEX , data = dat_use)
+summary(dat_use)
+summary(ols_out1)
+
+
+```
+```
+
+---
+title: "Lab7 addendum"
+output: github_document
+---
+
+
+  
+### Econ B2000, MA Econometrics
+### Kevin R Foster, the Colin Powell School at the City College of New York, CUNY
+### Fall 2023
+
+OK I already effed up the ordering by splitting Part 3 into 2 sub-parts. Now I'm going to further break Part2 into a main part and an addendum. 
+
+This is some complicated coding to make later coding less complicated. It's an investment.
+
+We want just 2 simple things: to standarize our data (all X-variables to have values just in [0,1] interval) and to split the data into a training set (that we use to estimate the model) and a test set (that we use to evaluate how well the model performs on new data that it hasn't trained on).
+
+But depending on your model, doing just those 2 simple things can take a bit of work. Best to do that in the privacy of your own home.
+
+I'll show this for a simple set of X-variables. Your version will be more complicated. The ones that are already nice dummy variables are easy and this coding might seem overly elaborate for them. But bigger factors such as the PUMA get ugly fast.
+
+I'm not necessarily saying you should use PUMA in your regression, only that if you want to use a big factor with many levels, this is a way to do it. Each PUMA number codes a 'neighborhood' -- although the size of that neighborhood is trying to enclose a roughly equal number of people. Dense areas in NYC get small geographic areas but upstate, where people are sparse, the PUMAs can be large geographic areas. FYI, 4-digit codes starting with 37 are Bronx, 38 Manhattan, 39 SI, 40 Brooklyn and 41 Queens. You can find the codes if you'd like. But here I'll just leave the code number.
+
+
+```{r eval=TRUE}
+
+# fix each variable you want in your regression
+# this example is for small version, 
+# public_work_num ~ SEX + educ_hs + educ_somecoll + educ_college + educ_advdeg + AGE + PUMA_factor
+
+# I want to demonstrate how to work with more complicated factors so I will also include PUMA
+dat_use$PUMA_factor <- as.factor(dat_use$PUMA)
+
+d_pub_work <- data.frame(model.matrix(~ dat_use$public_work_num)) 
+
+d_sex <- data.frame(model.matrix(~ dat_use$SEX))
+d_educ_hs <- data.frame(model.matrix(~ dat_use$educ_hs))
+d_educ_somecoll <- data.frame(model.matrix(~ dat_use$educ_somecoll))
+d_educ_college <- data.frame(model.matrix(~ dat_use$educ_college))
+d_educ_advdeg <- data.frame(model.matrix(~ dat_use$educ_advdeg))
+d_age <- data.frame(model.matrix(~ dat_use$AGE))
+d_PUMA <- data.frame(model.matrix(~ dat_use$PUMA_factor)) # which is really big!
+
+```
+In this step (and later) I worry that I don't want to accidentally create factors that are empty. Depending on your subgroup that you choose, this might happen. That will cause problems for later estimation (the math tries to answer the question, how are the zero observations in some group different from the other groups?). So we want to catch the problem early. Run colSums() to verify.
+
+```{r eval=TRUE}
+sum( colSums(d_PUMA) == 0) # should be zero
+```
+Then this puts them all together,
+```{r eval=TRUE}
+
+
+# there are better ways to code this, but this should be more robust to your other choices
+
+dat_for_analysis_sub <- data.frame(
+  d_pub_work[,2], # need [] since model.matrix includes intercept term
+  d_sex[,2],
+  d_educ_hs[,2],
+  d_educ_somecoll[,2],
+  d_educ_college[,2],
+  d_educ_advdeg[,2],
+  d_age[,2],
+  d_PUMA[,2:145] ) # this last term is why model.matrix 
+
+
+# this is just about me being anal-retentive, see difference in names(dat_for_analysis_sub) before and after running this bit
+names(dat_for_analysis_sub)
+names(dat_for_analysis_sub) <- sub("dat_use.","",names(dat_for_analysis_sub)) # drops each repetition of dat_use
+
+names(dat_for_analysis_sub)[1] <- "pub_work"
+names(dat_for_analysis_sub)[2] <- "female"
+names(dat_for_analysis_sub)[3:6] <- c("HS","SomeColl","College","AdvDeg")
+names(dat_for_analysis_sub)[7] <- "Age"
+
+names(dat_for_analysis_sub)
+
+```
+Then to create training data and test data,
+```{r}
+require("standardize")
+set.seed(654321)
+NN <- length(dat_for_analysis_sub$pub_work)
+
+restrict_1 <- (runif(NN) < 0.1) # use 10% as training data, ordinarily this would be much bigger but start small
+summary(restrict_1)
+dat_train <- subset(dat_for_analysis_sub, restrict_1)
+dat_test <- subset(dat_for_analysis_sub, !restrict_1)
+
+# again check this below, should be zero
+sum( colSums(dat_train) == 0)
+```
+
+
+
+Now writing the formula is a bit of a pain. Would like to have 'pub_work ~ female + HS + SomeColl + COllege + AdvDeg + Age + PUMA' but that last term is no longer an easy factor but a mess of 144 dummies! Don't copy-paste 144 times, instead:
+
+```{r eval=TRUE}
+fmla_sobj <- reformulate( names(dat_for_analysis_sub[2:151]), response = "pub_work")
+```
+
+sobj <- standardize(fmla_sobj, dat_train, family = binomial)
+
+s_dat_test <- predict(sobj, dat_test)
+
+```
+
+Now your OLS and logit models can be run like this:
+
+```{r eval=TRUE}
+
+model_lpm1 <- lm(sobj$formula, data = sobj$data)
+summary(model_lpm1)
+pred_vals_lpm <- predict(model_lpm1, s_dat_test)
+pred_model_lpm1 <- (pred_vals_lpm > mean(pred_vals_lpm))
+table(pred = pred_model_lpm1, true = dat_test$pub_work)
+
+# logit 
+model_logit1 <- glm(sobj$formula, family = binomial, data = sobj$data)
+summary(model_logit1)
+pred_vals <- predict(model_logit1, s_dat_test, type = "response")
+pred_model_logit1 <- (pred_vals > 0.5)
+table(pred = pred_model_logit1, true = dat_test$pub_work)
+
+```
+
+
+
+
+
+
+
+
